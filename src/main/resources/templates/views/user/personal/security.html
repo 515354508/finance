@@ -96,7 +96,7 @@
     function checkOldpwd() {
         var oldpwd = $("#oldpwd").val();
         if (oldpwd.length === 0) {
-            show_validate_msg("#oldpwd", "error", "老哥，这里还没填呢");
+            show_validate_msg("#oldpwd", "error", "这里还没填呢");
             return false;
         }
         show_validate_msg("#oldpwd", "success", "你觉得这就是你的原始密码了");
@@ -133,14 +133,14 @@
                 show_validate_msg("#confirmpwd", "success", "哎呀，看起来和前面的一样呢");
                 return true;
             }else if (confirmpwd==="") {
-                show_validate_msg("#confirmpwd", "error", "小伙子心急了呀，这里还没有填呢");
+                show_validate_msg("#confirmpwd", "error", "心急了呀，这里还没有填呢");
                 return false;
             } else {
                 show_validate_msg("#confirmpwd", "error", "哎呀，看起来和前面不一样呢");
                 return false;
             }
         } else {
-            show_validate_msg("#confirmpwd", "error", "小伙子心急了呀，前面的还没有填呢");
+            show_validate_msg("#confirmpwd", "error", "心急了呀，前面的还没有填呢");
             return false;
         }
     }

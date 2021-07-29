@@ -85,7 +85,7 @@ public class MainController {
 
         model.addAttribute("pageTopBarInfo","系统首页");
         model.addAttribute("activeUrl","indexActive");
-        return "admin/main";
+        return "admin/userinfo/userinfo";
     }
 
     /**

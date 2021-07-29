@@ -328,14 +328,14 @@
 
     //点击新增按钮弹出模态框。
     $("#user_add_modal_btn").click(function () {
-        // //清除表单数据（表单完整重置（表单的数据，表单的样式））
-        // reset_form("#userAddModal form");
-        // //弹出模态框
-        // $("#userAddModal").modal({
-        //     //点击增加框背景不删除增加框
-        //     backdrop: "static"
-        // });
-        $.alert("管理员不能为用户设置密码，请引导用户自行前往注册");
+        //清除表单数据（表单完整重置（表单的数据，表单的样式））
+        reset_form("#userAddModal form");
+        //弹出模态框
+        $("#userAddModal").modal({
+            //点击增加框背景不删除增加框
+            backdrop: "static"
+        });
+        // $.alert("管理员不能为用户设置密码，请引导用户自行前往注册");
     });
 
     //点击保存，保存新增用户信息。
@@ -402,8 +402,8 @@
                 return false;
             }
         }
-        var pwd = $("#password").val();
-        $("#password").val($.md5(pwd));
+        var pwd = $("#password_add_input").val();
+        $("#password_add_input").val($.md5(pwd));
         //2、发送ajax请求保存用户
         $.ajax({
             url: "/user/addUser",

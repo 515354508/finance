@@ -57,6 +57,7 @@ public class LoginController {
         return Msg.fail();
     }
 
+    //登录方法verifyLogin 接收用户名和密码并验证
     @GetMapping("/verifyLogin")
     @ResponseBody
     public Msg verifyLogin(@RequestParam("username") String username, @RequestParam("password") String password,
@@ -64,11 +65,12 @@ public class LoginController {
 
         User loginUser = userService.selectUserByTerms(username, password);
         if (loginUser != null) {
-            //获取当前用户
+            //获取当前用户subject对象
             Subject subject = SecurityUtils.getSubject();
-            //封装用户登录数据
+            //封装用户登录数据：username身份信息 password凭证信息
             UsernamePasswordToken token = new UsernamePasswordToken(username, password);
             try {
+                //对用户信息进行认证
                 subject.login(token);
                 return Msg.success().add("url", "/user/index.html");
             } catch (UnknownAccountException | IncorrectCredentialsException e) {
@@ -95,10 +97,11 @@ public class LoginController {
 
     @PostMapping("/register")
     @ResponseBody
-    public Msg register(@RequestParam("username") String username, @RequestParam("password") String password) {
+    public Msg register(@RequestParam("username") String username, @RequestParam("password") String password,@RequestParam("email") String email) {
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
+        user.setEmail(email);
         user.setStatus(0);
         user.setReputation("良好");
         userService.insertUser(user);
@@ -112,20 +115,10 @@ public class LoginController {
         return o;
     }
 
-    @PostMapping("/sendSimpleEmail")
+    @RequestMapping("/sendEmail")
     @ResponseBody
-    public String sendSimpleEmail(){
-        String receiver="1005307373@qq.com";
-        String subject="springboot 邮件发送测试";
-        String content="一封来自于SpringBoot发送的qq的邮件，异步发送模式";
-        emailService.sendEmail(receiver,subject,content);
-        return "邮件发送成功，请检查邮箱！";
-    }
-
-    @PostMapping("/sendEmail")
-    @ResponseBody
-    public String sendEmail(@RequestParam("username") String username){
-        String receiver="1005307373@qq.com";
+    public String sendEmail(String username, String email){
+        String receiver = email;
         String subject="模板邮件的发送";
         Context context=new Context();
         context.setVariable("username",username);

@@ -77,29 +77,23 @@
                           aria-hidden="true"></span>
                 </div>
 
-                <div id="captcha_note_parent"
-                     class="form-group has-feedback feedback-left row">
+
+                <div class="form-group has-feedback feedback-left row" id="email_note_parent">
                     <div class="col-xs-7">
-                        <input type="text" id="captcha" name="captcha"
-                               class="form-control" placeholder="请输入验证码">
+                        <input type="email" placeholder="请输入邮箱" class="form-control"
+                               id="email" name="email" style="width: 220px"/>
                     </div>
-                    <div class="col-xs-5">
-                        <canvas id="canvas" width="120" height="45"></canvas>
-                    </div>
-                    <span id="captcha_note_child" class="help-block"
-                          style="margin-left: 15px"></span>
+                     <div class="col-xs-5">
+                          <button id="email_btn" class="btn btn-block btn-primary " type="button">获取验证码</button>
+                     </div>
+                    <span id="email_note_child" class="help-block"
+                          style="margin-left: 15px;margin-top: 43px"></span>
                 </div>
 
                 <div class="form-group has-feedback feedback-left">
-                    <input type="email" placeholder="请输入邮箱" class="form-control "
-                           id="email" name="email"/><span class="help-block"></span>
-                    <button id="email_btn" class="btn btn-block btn-primary" type="button">获取验证码</button>
-
-
-                </div>
-
-                <div class="form-group has-feedback feedback-left">
-                    <input type="text" id="vercode" name="vercode" class="form-control" placeholder="请输入邮箱验证码">
+                    <input type="text" id="vercode" name="vercode" class="form-control" placeholder="请输入邮箱验证码"><span class="help-block"></span>
+                    <span class="mdi mdi-lock form-control-feedback"
+                          aria-hidden="true"></span>
 
                 </div>
                 <div class="form-group">
@@ -131,28 +125,11 @@
         $("input[name='password']").change(removeLoginDisabled);
         $("input[name='repassword']").blur(verifyRepassword);
         $("input[name='repassword']").change(removeLoginDisabled);
-        //生成图片验证码
-        drawPic(show_num);
-        $("#canvas").click(function (e) {
-            //取消事件的默认动作。
-            e.preventDefault();
-            drawPic(show_num);
-        });
 
-        $("#email_btn").click(function () {
-            $.ajax({
-                url: "/login/sendEmail",
-                type: "POST",
-                data: {
-                    "username": $("#username").val()
-                },
-                success: function () {
-                    alert("已发送邮件");
-                }
-            });
-        });
+        $("input[name='email']").blur(verifyEmail);
+        $("input[name='vercode']").blur(verifyCode);
 
-        $("#captcha").blur(verifyCaptcha);
+
         $("#login_btn").mousedown(verifyLogin);
         //回车注册
         $("body").keyup(function (event) {
@@ -163,28 +140,19 @@
 
     });
 
-    function verifyCaptcha() {
-        var captcha_num = $("#captcha").val().toLowerCase();
-        var real_num = show_num.join("");
-        $("#captcha_note_parent").removeClass("has-success has-error");
-        $("#captcha_note_child").text("");
-        if (captcha_num == "") {
-            $("#captcha_note_parent").addClass("has-error");
-            $("#captcha_note_child").text("验证码为空");
-            $("#login_btn").attr("disabled", "disabled");
-            return false;
-        } else if (captcha_num == real_num) {
-            $("#captcha_note_parent").addClass("has-success");
-            $("#captcha_note_child").text("验证码正确");
-            $("#login_btn").removeAttr("disabled");
-            return true;
-        } else {
-            $("#captcha_note_parent").addClass("has-error");
-            $("#captcha_note_child").text("验证码错误");
-            $("#login_btn").attr("disabled", "disabled");
-            return false;
-        }
-    }
+    $("#email_btn").click(function () {
+        $.ajax({
+            url: "/login/sendEmail",
+            type: "post",
+            data: {
+                "username": $("#username").val(),
+                "email": $("#email").val()
+            },
+            success: function () {
+                alert("已发送邮件");
+            }
+        });
+    });
 
     function verifyUsername() {
         //发送ajax请求校验用户名是否可用
@@ -194,7 +162,8 @@
             show_validate_msg("#username", "error", "用户名为空");
             $("#login_btn").attr("disabled", "disabled");
             return false;
-        } else {
+        }
+        else {
             $.ajax({
                 url: "/login/loginVerifyUsername/"+username,
                 type: "GET",
@@ -242,26 +211,65 @@
         }
     }
 
-    // function verifyCode() {
-    //     $.ajax({
-    //         url: "/login/code",
-    //         type: "POST",
-    //         // data: {
-    //         //     "username": $("#username").val(),
-    //         // },
-    //         success: function (result) {
-    //             var result= JSON.stringify(result);
-    //             $("#ecode").val(result);
-    //             // alert( $("#ecode").val());
-    //         }
-    //     })
-    //
-    //     if ($("#ecode").val()!=$("#vercode").val()) {
-    //         show_validate_msg("#vercode", "error", "邮箱验证码不相同");
-    //         $("#login_btn").attr("disabled", "disabled");
-    //     }
-    // }
+    function verifyEmail() {
+        var email=document.getElementById("email").value;
+        $("#email_note_parent").removeClass("has-success has-error");
+        $("#email_note_child").text("");
+        if(email===""){
+            $("#email_note_parent").addClass("has-error");
+            $("#email_note_child").text("邮箱为空");
+            $("#login_btn").attr("disabled", "disabled");
+            return false;
+        }else {
+            var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+            if(reg.test(email)){
+                $("#email_note_parent").addClass("has-success");
+                $("#email_note_child").text("邮箱格式正确");
 
+                $("#login_btn").removeAttr("disabled");
+                return true;
+            }
+            else {
+                $("#email_note_parent").addClass("has-error");
+                $("#email_note_child").text("邮箱格式错误");
+                $("#login_btn").attr("disabled", "disabled");
+                return false;
+            }
+        }
+    }
+
+    function verifyCode() {
+        var lock=true;
+        if($("#vercode").val() == "")
+        {
+            show_validate_msg("#vercode", "error", "校验码为空");
+            $("#login_btn").attr("disabled", "disabled");
+            return false;
+        }else {
+            $.ajax({
+                url: "/login/code",
+                type: "POST",
+                success: function (result) {
+                    var result = JSON.stringify(result);
+                    // alert(result);
+                    var code = '"' + $("#vercode").val() + '"';
+                    // alert(code);
+
+                    if (code != result) {
+                        show_validate_msg("#vercode", "error", "校验码错误，请重新输入");
+                        $("#login_btn").attr("disabled", "disabled");
+                        lock=false;
+                    }
+                    else {
+                        show_validate_msg("#vercode", "success", "校验码正确");
+                        $("#login_btn").removeAttr("disabled");
+                    }
+                }
+            });
+            return lock;
+        }
+
+    }
 
     function removeLoginDisabled() {
         $("#login_btn").removeAttr("disabled");
@@ -269,9 +277,9 @@
 
     function verifyLogin() {
         $("input[name='username']").blur(verifyUsername);
-        $("#captcha").blur(verifyCaptcha);
         $("#repassword").blur(verifyRepassword);
-        // $("#vercode").blur(verifyCode);
+        $("#email").blur(verifyEmail);
+        $("#vercode").blur(verifyCode)
         if ($("#username").val() == "") {
             show_validate_msg("#username", "error", "用户名为空");
             $("#login_btn").attr("disabled", "disabled");
@@ -292,64 +300,47 @@
             return false;
         }
 
-        if ($("#captcha").val() == "") {
-            $("#captcha_note_parent").addClass("has-error");
-            $("#captcha_note_child").text("验证码为空");
+        if($("#email").val()== ""){
+            $("#email_note_parent").addClass("has-error");
+            $("#email_note_child").text("邮箱为空");
             $("#login_btn").attr("disabled", "disabled");
             return false;
         }
 
+        if ($("#vercode").val() == "") {
+            show_validate_msg("#vercode", "error", "校验码为空");
+            $("#login_btn").attr("disabled", "disabled");
+            return false;
+        }
+        if (verifyUsername() && verifyEmail() && verifyRepassword() && verifyCode()) {
 
-        if (verifyUsername() && verifyCaptcha() && verifyRepassword()) {
-
-
-                var pwd = $("#password").val();
-                var newpwd = $.md5(pwd);
-                $("#password").val(newpwd);
-                $("#repassword").val(newpwd)
+            var pwd = $("#password").val();
+            var newpwd = $.md5(pwd);
+            $("#password").val(newpwd);
+            $("#repassword").val(newpwd);
             $.ajax({
-                    url: "/login/code",
-                    type: "POST",
-                    // data: {
-                    //     "username": $("#username").val(),
-                    // },
-                    success: function (result) {
-                        var result= JSON.stringify(result);
-                        // alert(result);
-                        var code='"'+$("#vercode").val()+'"';
-                       // alert(code);
-
-                        if (code!=result){
-                            alert("邮箱验证码错误");
-                            return;
-                        }else {
-                            $.ajax({
-                                url: "/login/register",
-                                type: "POST",
-                                data: {
-                                    "username": $("#username").val(),
-                                    "password": $("#password").val()
-                                },
-                                success: function (result) {
-                                    if (result.code === 100) {
-                                        var url = result.extend.url;
-                                        //alert(url);
-                                        location.href = url;
-                                    } else {
-                                        show_validate_msg("#password", "error",
-                                            "密码错误");
-                                        $("#login_btn")
-                                            .attr("disabled", "disabled");
-                                    }
-                                }
-                            })
-                        }
+                url: "/login/register",
+                type: "POST",
+                data: {
+                    "username": $("#username").val(),
+                    "password": $("#password").val(),
+                    "email": $("#email").val()
+                },
+                success: function (result) {
+                    if (result.code === 100) {
+                        var url = result.extend.url;
+                        //alert(url);
+                        location.href = url;
+                    } else {
+                        show_validate_msg("#password", "error",
+                            "密码错误");
+                        $("#login_btn")
+                            .attr("disabled", "disabled");
                     }
-                })
+                }
+            })
 
-
-            }
-
+        }
 
     }
 
@@ -380,37 +371,7 @@
         return "rgb(" + r + "," + g + "," + b + ")";
     }
 
-    /**绘制验证码图片**/
-    function drawPic(show_num) {
-        var canvas = document.getElementById("canvas");
-        var width = canvas.width;
-        var height = canvas.height;
-        var ctx = canvas.getContext('2d');
-        ctx.textBaseline = 'bottom';
 
-        /**绘制背景色**/
-        ctx.fillStyle = randomColor(280, 280); //颜色若太深可能导致看不清
-        ctx.fillRect(0, 0, width, height);
-        /**绘制文字**/
-        var sCode = "A,B,C,E,F,G,H,J,K,L,M,N,P,Q,R,S,T,W,X,Y,Z,1,2,3,4,5,6,7,8,9,0";
-        var aCode = sCode.split(",");
-        for (var i = 0; i < 4; i++) {
-            var txt = aCode[randomNum(0, aCode.length)];//得到随机的一个内容
-            show_num[i] = txt.toLowerCase();
-            ctx.fillStyle = randomColor(50, 160); //随机生成字体颜色
-            ctx.font = randomNum(15, 40) + 'px SimHei'; //随机生成字体大小
-            var x = 10 + i * 25;
-            var y = randomNum(25, 45);
-            var deg = randomNum(-45, 45);
-            //修改坐标原点和旋转角度
-            ctx.translate(x, y);
-            ctx.rotate(deg * Math.PI / 180);
-            ctx.fillText(txt, 0, 0);
-            //恢复坐标原点和旋转角度
-            ctx.rotate(-deg * Math.PI / 180);
-            ctx.translate(-x, -y);
-        }
-    }
 </script>
 
 </body>

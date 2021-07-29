@@ -52,4 +52,12 @@ public class LoanServiceImpl implements LoanService {
     public Integer updateLoan(Loan loan) {
         return loanMapper.updateByPrimaryKeySelective(loan);
     }
+
+    @Override
+    @Transactional
+    public Integer deleteLoanByUserId(Integer id) {
+        LoanExample loanExample = new LoanExample();
+        loanExample.createCriteria().andLoanidEqualTo(id);
+        return loanMapper.deleteByExample(loanExample);
+    }
 }

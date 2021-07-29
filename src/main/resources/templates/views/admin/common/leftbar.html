@@ -15,9 +15,7 @@
     <div class="lyear-layout-sidebar-scroll">
         <nav class="sidebar-main">
             <ul class="nav nav-drawer">
-                <li class="nav-item" th:class="${activeUrl=='indexActive'?'nav-item active':'nav-item'}"><a
-                        th:href="@{/admin/index.html}"><i
-                        class="mdi mdi-home"></i>系统首页</a></li>
+
                 <li shiro:hasPermission="admin:userInfo" class="nav-item nav-item-has-subnav"
                     th:class="${activeUrl1=='userInfoActive'?'nav-item nav-item-has-subnav active open':'nav-item nav-item-has-subnav'}">
                     <a href="javascript:void(0)"><i class="mdi mdi-account-settings-variant"></i>

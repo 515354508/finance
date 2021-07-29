@@ -47,13 +47,14 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr th:each="finance:${financeList}">
+                                        <tr th:each="finance,financeStat:${financeList}">
                                             <td th:text="${(finacnePageInfo.pageNum - 1) * finacnePageInfo.pageSize+financeStat.index+1}"></td>
                                             <td th:text="${finance.name}"></td>
                                             <td th:text="${finance.type}"></td>
                                             <td th:text="${finance.assets}"></td>
 <!--                                           <td th:text="${#strings.substring(finance.bankdesc,0,10)}+'...'"></td>-->
-                                            <td th:text="${#strings.length(finance.bankdesc)>=10?#strings.substring(finance.bankdesc,0,10)+'...':finance.bankdesc}"></td>
+                                            <td  th:id="des+${financeStat.index}" name="banksec"></td>
+<!--                                            <td th:text="${#strings.length(finance.bankdesc)>=10?#strings.substring(finance.bankdesc,0,10)+'...':finance.bankdesc}" name="bankdesc"></td>-->
                                             <td>
                                                 <button class="btn btn-primary btn-sm update_btn"
                                                         th:attr="update-id=${finance.id}">
@@ -325,7 +326,27 @@
 <script th:src="@{/js/wangEditor.js}"></script>
 <!--自定义js脚本-->
 <script th:src="@{/lyear/js/main.min.js}"></script>
-<script type="text/javascript">
+<script th:inline="javascript">
+
+    var a=[[${financeList}]];
+    var des=new Array()
+    for (var i=0;i<a.length;i++){
+        des[i]=a[i].bankdesc;
+        des[i] =des[i].replace(/<[^>]+>/g, "");
+    }
+    console.log(des);
+    $("#des3").html(des[3]);
+    var td=	document.getElementsByName("banksec");
+    console.log(td.length);
+    for(var i=0;i<td.length;i++){
+        if (des[i].length>=10){
+            des[i]=des[i].substring(0,10)+'...'
+            // des[i]=des[i].replace("&nbsp;","");
+        }
+        var id="des"+i;
+        console.log(id);
+        $('#'+id).html(des[i]);
+    }
 
     //点击新增按钮弹出模态框。
     $("#add_modal_btn").click(function () {

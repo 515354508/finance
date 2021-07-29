@@ -2,6 +2,7 @@ package com.zsc.finance.controller;
 
 import com.zsc.finance.common.Msg;
 import com.zsc.finance.entity.User;
+import com.zsc.finance.service.LoanService;
 import com.zsc.finance.service.UserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -19,6 +20,8 @@ public class UserController {
 
     @Autowired
     UserService userService;
+    @Autowired
+    LoanService loanService;
 
     /**
      * 跳转到账户安全界面（用户）(修改密码)
@@ -193,6 +196,7 @@ public class UserController {
     @ResponseBody
     public Msg deleteUserById(@PathVariable("id")Integer id,HttpSession session){
         Integer result = userService.deleteUserById(id);
+        loanService.deleteLoanByUserId(id);
         if (result==1){
             // 删除用户时应先判断这个用户是否在线
             User loginUser = (User) session.getAttribute("loginUser");
@@ -229,5 +233,6 @@ public class UserController {
         model.addAttribute("pageTopBarInfo", "用户信誉界面");
         return "/admin/userinfo/reputation";
     }
+
 
 }

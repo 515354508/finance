@@ -14,7 +14,8 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
-    //shiroFilterFactoryBean
+    //shiroFilterFactoryBean对象=>创建shiro中的过滤器对象
+    //Qualifier表明securityManager是所需要的实现类
     @Bean
     public ShiroFilterFactoryBean getShiroFilterFactoryBean(@Qualifier("securityManager") DefaultWebSecurityManager defaultWebSecurityManager) {
         ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
@@ -29,22 +30,14 @@ public class ShiroConfig {
             perms: 拥有对某个资源的权限才能访问
             role:拥有某个角色权限才能访问
        */
-
+        //定义过滤规则
         Map<String, String> filterMap = new LinkedHashMap<>();
-//
-//        //授权
-//        filterMap.put("/user/add","perms[user:add]");
-//        filterMap.put("/user/update","perms[user:update]");
-        //授权
+
+        //授权：role
         filterMap.put("/user/**", "roles[user]");
         filterMap.put("/admin/**", "roles[admin]");
 
-
-//
-////        filterMap.put("/user/add","authc");
-////        filterMap.put("/user/update","authc");
-
-        //过滤请求
+        //过滤请求，允许匿名访问
         filterMap.put("/error/**", "anon");
         filterMap.put("/", "anon");
         filterMap.put("/index.html", "anon");
@@ -57,11 +50,9 @@ public class ShiroConfig {
         filterMap.put("/js/**", "anon");
         //对所有请求认证
         //主要这行代码必须放在所有权限设置的最后，不然会导致所有 url 都被拦截
+        //除匿名访问，其他都要必须认证才能访问:authc
         filterMap.put("/**", "authc");
 
-
-//        filterMap.put("/user/*", "authc");
-//        filterMap.put("/admin/*", "authc");
 
         //设置登出
         //filterMap.put("/logout", "logout");
@@ -69,13 +60,12 @@ public class ShiroConfig {
         bean.setFilterChainDefinitionMap(filterMap);
         //设置登录请求（认证界面）
         bean.setLoginUrl("/");
-//        //设置未授权页面
-//        bean.setUnauthorizedUrl("/noauth");
 
         return bean;
     }
 
     //DafaultWebSecurituManager
+    //核心管理器对象securityManager
     @Bean(name = "securityManager")
     public DefaultWebSecurityManager getDefaultWebSecurityManager(@Qualifier("userRealm") UserRealm userRealm) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
@@ -85,7 +75,7 @@ public class ShiroConfig {
         return securityManager;
     }
 
-    //创建realm对象 ，需要自定义
+    //创建realm对象 ，领域对象，shiro和安全数据之间的桥梁
     @Bean(name = "userRealm")
     public UserRealm userRealm() {
         return new UserRealm();

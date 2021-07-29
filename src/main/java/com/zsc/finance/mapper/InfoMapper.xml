@@ -22,7 +22,7 @@
     <!-- 指定联合查询用户字段的封装 -->
     <association property="user"
                  javaType="com.zsc.finance.entity.User">
-      <id column="id" jdbcType="INTEGER" property="id" />
+      <id column="uid" jdbcType="INTEGER" property="id" />
       <result column="username" jdbcType="VARCHAR" property="username" />
       <result column="realname" jdbcType="VARCHAR" property="realname" />
       <result column="password" jdbcType="VARCHAR" property="password" />
@@ -36,8 +36,8 @@
     <!-- 指定联合查询管理员字段的封装 -->
     <association property="admin"
                  javaType="com.zsc.finance.entity.Admin">
-      <id column="id" jdbcType="INTEGER" property="id" />
-      <result column="username" jdbcType="VARCHAR" property="username" />
+      <id column="aid" jdbcType="INTEGER" property="id" />
+      <result column="ausername" jdbcType="VARCHAR" property="username" />
       <result column="password" jdbcType="VARCHAR" property="password" />
       <result column="status" jdbcType="INTEGER" property="status" />
     </association>
@@ -106,8 +106,8 @@
   </sql>
   <sql id="Base_Column_List_With_User_And_Admin">
     i.id, i.sendId, i.receiveId, i.createTime, i.title, i.infoDesc, i.status,
-    u.id, u.username, u.realname, u.password, u.IDcard, u.phone, u.email, u.paypwd, u.status, u.reputation,
-    a.id, a.username, a.password, a.status
+    u.id as uid, u.username, u.realname, u.password, u.IDcard, u.phone, u.email, u.paypwd, u.status, u.reputation,
+    a.id as aid, a.username as ausername, a.password, a.status
   </sql>
 
   <select id="selectByExampleWithUserAndAdmin" parameterType="com.zsc.finance.entity.InfoExample" resultMap="BaseResultMapWithUserAndAdmin">

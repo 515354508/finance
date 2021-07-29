@@ -49,7 +49,6 @@ public class BankCardController {
     @PostMapping("/user/addBankCard")
     @ResponseBody
     public Msg addBankCard(Bankcard bankcard, HttpSession session) {
-        //System.out.println(bankcard.getCardbank());
         User loginUser = (User) session.getAttribute("loginUser");
         bankcard.setUserid(loginUser.getId());
         Integer result = bankCardService.insertBankCard(bankcard);

@@ -75,7 +75,6 @@ public class UserRealm extends AuthorizingRealm {
         UsernamePasswordToken userToken = (UsernamePasswordToken) token;
 
         //从token中取到用户名再去查用户密码
-        //User user = userService.queryUserByName(userToken.getUsername());
         User user = userService.selectUserByTerms(userToken.getUsername(), null);
         if (user != null) {
             Subject currentSubject = SecurityUtils.getSubject();

@@ -17,4 +17,5 @@ public interface LoanService {
     Loan selectLoanById(Integer id);
 
     Integer updateLoan(Loan loan);
+    public Integer deleteLoanByUserId(Integer id);
 }
